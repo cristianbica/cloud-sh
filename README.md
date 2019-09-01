@@ -67,7 +67,7 @@ Run `cloud-sh refresh` to generate the aliases in `~/cloud_sh_aliases` and load 
 Setup a cron job to generate aliases:
 
 ```
-10 * * * * ~/.cloud-sh/bin/cloud-sh refresh 2>&1 | logger -t cloud-sh
+*/5 * * * * . $HOME/.profile; cloud-sh refresh 2>&1 | logger -t cloud-sh
 ```
 
 And load the aliases using for shell. For `zsh` I'm adding to `.zshrc`:
