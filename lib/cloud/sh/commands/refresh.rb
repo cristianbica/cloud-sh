@@ -72,11 +72,11 @@ module Cloud
             add_alias(:k8s, account, :switch, :to, cluster, kubectl("config use-context", cluster.context))
             add_alias(:k8s, account, :ctl, cluster, kubectl("--context #{cluster.context}"))
             cluster.pods.each do |namespace, pods|
-              add_alias(:k8s, account, :tail, namespace, :all, "cloud-sh k8s tail --context #{cluster.context} --namespace #{namespace}")
+              add_alias(:k8s, account, :tail, cluster, namespace, :all, "cloud-sh k8s tail --context #{cluster.context} --namespace #{namespace}")
               pods.each do |pod|
-                add_alias(:k8s, account, :tail, namespace, pod.name, "cloud-sh k8s tail --context #{cluster.context} --namespace #{namespace} --pod #{pod.name}") unless pod.name == "console"
-                add_alias(:k8s, account, :exec, namespace, pod.name, "cloud-sh k8s exec  --context #{cluster.context} --namespace #{namespace} --pod #{pod.name}")
-                add_alias(:k8s, account, namespace, :rails, :console, "cloud-sh k8s exec --context #{cluster.context} --namespace #{namespace} --pod #{pod.name} --cmd 'bundle exec rails console'") if pod.name == "console"
+                add_alias(:k8s, account, :tail, cluster, namespace, pod.name, "cloud-sh k8s tail --context #{cluster.context} --namespace #{namespace} --pod #{pod.name}") unless pod.name == "console"
+                add_alias(:k8s, account, :exec, cluster, namespace, pod.name, "cloud-sh k8s exec  --context #{cluster.context} --namespace #{namespace} --pod #{pod.name}")
+                add_alias(:k8s, account, cluster, namespace, :rails, :console, "cloud-sh k8s exec --context #{cluster.context} --namespace #{namespace} --pod #{pod.name} --cmd 'bundle exec rails console'") if pod.name == "console"
               end
             end
           end
