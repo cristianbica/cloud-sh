@@ -64,7 +64,6 @@ module Cloud
           sc.flag :pod, desc: "K8S Pod (prefix)", required: true, arg_name: "pod", default_value: "all"
           sc.flag :tail, desc: "Number of lines to tail initially", required: false, arg_name: "tail", default_value: "10"
           sc.action do |global_options, options, args|
-            puts [global_options, options, args].inspect
             Cloud::Sh::Commands::K8sTail.execute(global_options, options, args)
           end
         end

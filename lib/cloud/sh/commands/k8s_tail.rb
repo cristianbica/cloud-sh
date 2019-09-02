@@ -27,7 +27,7 @@ module Cloud
         end
 
         def exe
-          File.expand_path("../../../../exe/vendor/kubetail", __dir__)
+          File.expand_path("../../../../exe/kubetail", __dir__)
         end
 
         def env
