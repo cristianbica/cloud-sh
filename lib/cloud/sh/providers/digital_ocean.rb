@@ -7,8 +7,8 @@ module Cloud
   module Sh
     module Providers
       class DigitalOcean < Base
-        def self.refresh_k8s_configs
-          return if File.exist?(kube_config) && (Time.now.to_i - File.mtime(kube_config).to_i) < 3600
+        def self.refresh_k8s_configs(force: false)
+          return if !force && File.exist?(kube_config) && (Time.now.to_i - File.mtime(kube_config).to_i) < 3600
           configs = Cloud::Sh.config.accounts.map { |account| new(account).k8s_configs }.flatten.compact
           config = configs.shift
           configs.each do |cfg|
@@ -16,7 +16,7 @@ module Cloud
             config["contexts"] += cfg["contexts"]
             config["users"] += cfg["users"]
           end
-          config["current-context"] = config["contexts"].first["name"]
+          config["current-context"] = Cloud::Sh.config.raw["default_kubectl_context"] || config["contexts"].first["name"]
           File.write(kube_config, YAML.dump(config))
         end
 

@@ -3,7 +3,7 @@
 module Cloud
   module Sh
     class Config
-      attr_reader :accounts
+      attr_reader :accounts, :raw
 
       def initialize
         @accounts = []
@@ -12,8 +12,12 @@ module Cloud
 
       def read_config
         return unless File.exist?(config_file)
-        config = YAML.safe_load(File.read(config_file))
-        config.each do |account_config|
+        @raw = YAML.safe_load(File.read(config_file))
+        load_accounts
+      end
+
+      def load_accounts
+        raw["accounts"].each do |account_config|
           accounts << Account.new(account_config)
         end
       end
@@ -56,11 +60,11 @@ module Cloud
       end
 
       def find_cluster(name)
-        clusters.find { |cluster| cluster.name == name }
+        clusters.find { |cluster| cluster.name == name } || clusters.push(Cluster.new("name" => name)).last
       end
 
       def find_database(name)
-        databases.find { |database| database.name == name }
+        databases.find { |database| database.name == name } || databases.push(Database.new("name" => name)).last
       end
 
       def ignore_database?(name)

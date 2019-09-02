@@ -9,7 +9,7 @@ module Cloud
         attr_reader :aliases
 
         def execute
-          Cloud::Sh::Providers::DigitalOcean.refresh_k8s_configs
+          Cloud::Sh::Providers::DigitalOcean.refresh_k8s_configs(force: options[:force])
           build_aliases
           save_aliases
         end

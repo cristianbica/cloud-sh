@@ -10,6 +10,7 @@ module Cloud
 
       desc "Refresh aliases"
       command :refresh do |c|
+        c.switch :force, negatable: false, default_value: false, desc: "Force refresh"
         c.action do |global_options, options, args|
           Cloud::Sh::Commands::Refresh.execute(global_options, options, args)
         end
