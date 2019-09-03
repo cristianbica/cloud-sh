@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cloud-sh (1.0.2)
+    cloud-sh (1.0.3)
       gli
 
 GEM

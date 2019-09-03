@@ -47,6 +47,7 @@ module Cloud
           provider = cloud_provider(account)
           provider.databases do |database|
             next if database.cluster.ignore
+
             if database.cluster.engine == "pg"
               add_alias(:do, account, :psql, database.cluster, database.name, "psql \\\"#{database.uri}\\\"")
               add_alias(:do, account, :pgdump, database.cluster, database.name, pgdump_command(database))
@@ -72,10 +73,10 @@ module Cloud
             add_alias(:k8s, account, :switch, :to, cluster, kubectl("config use-context", cluster.context))
             add_alias(:k8s, account, :ctl, cluster, kubectl("--context #{cluster.context}"))
             cluster.pods.each do |namespace, pods|
-              add_alias(:k8s, account, :tail, cluster, namespace, :all, "cloud-sh k8s tail --context #{cluster.context} --namespace #{namespace}")
+              add_alias(:k8s, account, cluster, namespace, :tail, :all, "cloud-sh k8s tail --context #{cluster.context} --namespace #{namespace}")
               pods.each do |pod|
-                add_alias(:k8s, account, :tail, cluster, namespace, pod.name, "cloud-sh k8s tail --context #{cluster.context} --namespace #{namespace} --pod #{pod.name}") unless pod.name == "console"
-                add_alias(:k8s, account, :exec, cluster, namespace, pod.name, "cloud-sh k8s exec  --context #{cluster.context} --namespace #{namespace} --pod #{pod.name}")
+                add_alias(:k8s, account, cluster, namespace, :tail, pod.name, "cloud-sh k8s tail --context #{cluster.context} --namespace #{namespace} --pod #{pod.name}") unless pod.name == "console"
+                add_alias(:k8s, account, cluster, namespace, :exec, pod.name, "cloud-sh k8s exec  --context #{cluster.context} --namespace #{namespace} --pod #{pod.name}")
                 add_alias(:k8s, account, cluster, namespace, :rails, :console, "cloud-sh k8s exec --context #{cluster.context} --namespace #{namespace} --pod #{pod.name} --cmd 'bundle exec rails console'") if pod.name == "console"
               end
             end
@@ -98,7 +99,7 @@ module Cloud
 
         def mysqldump_command(database)
           uri = URI.parse(database.uri)
-          dump_name = "#{database.db}-`date +%s`.sql"
+          dump_name = "#{database.name}-`date +%Y%m%d%H%M`.sql"
           [ :mysqldump, mysql_connection_params(uri), uri.path.delete("/"), "> #{dump_name}"].join(" ")
         end
 
@@ -113,7 +114,7 @@ module Cloud
         end
 
         def pgdump_command(database)
-          dump_name = "#{database.db}-`date +%s`.sql"
+          dump_name = "#{database.name}-`date +%Y%m%d%H%M`.sql"
           "pg_dump \\\"#{database.uri}\\\" -f #{dump_name}"
         end
 
@@ -124,6 +125,7 @@ module Cloud
 
         def normalize_alias_part(part)
           return nil if part.respond_to?(:default) && part.default
+
           if part.respond_to?(:alias)
             part = part.alias
           elsif part.respond_to?(:name)
