@@ -1,14 +1,14 @@
 PATH
   remote: .
   specs:
-    cloud-sh (1.0.3)
+    cloud-sh (1.0.5)
       gli
 
 GEM
   remote: https://rubygems.org/
   specs:
     coderay (1.1.2)
-    gli (2.18.2)
+    gli (2.19.0)
     method_source (0.9.2)
     minitest (5.11.3)
     pry (0.12.2)
