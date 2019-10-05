@@ -57,7 +57,7 @@ module Cloud
               add_alias(:do, account, :mysqldump, database.cluster, database.name, mysqldump_command(database))
               add_alias(:do, account, :mycli, database.cluster, database.name, "mycli \\\"#{database.uri}\\\"")
             elsif database.cluster.engine == "redis"
-              add_alias(:do, account, :redis, database.cluster, database.name, "redli -u \\\"#{database.uri}\\\"")
+              add_alias(:do, account, :redis, database.cluster, "redli -u \\\"#{database.uri}\\\"")
             else
               puts "Don't know how to handle database engine #{database.cluster.engine}"
             end
